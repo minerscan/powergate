@@ -15,8 +15,8 @@ import (
 	"github.com/textileio/powergate/util"
 )
 
-const (
-	initialBalance int64 = 4000000000000000
+var (
+	initialBalance = big.NewInt(4000000000000000)
 )
 
 func TestMain(m *testing.M) {
@@ -69,17 +69,17 @@ func TestSendFil(t *testing.T) {
 
 	const amt int64 = 1
 
-	balForAddress := func(addr string) (uint64, error) {
+	balForAddress := func(addr string) (*big.Int, error) {
 		info, err := fapi.Info(ctx)
 		if err != nil {
-			return 0, err
+			return big.NewInt(0), err
 		}
 		for _, balanceInfo := range info.Balances {
 			if balanceInfo.Addr == addr {
 				return balanceInfo.Balance, nil
 			}
 		}
-		return 0, fmt.Errorf("no balance info for address %v", addr)
+		return big.NewInt(0), fmt.Errorf("no balance info for address %v", addr)
 	}
 
 	addrs := fapi.Addrs()
@@ -93,13 +93,13 @@ func TestSendFil(t *testing.T) {
 	hasInitialBal := func() bool {
 		bal, err := balForAddress(addr2)
 		require.NoError(t, err)
-		return bal == uint64(initialBalance)
+		return bal.Cmp(initialBalance) == 0
 	}
 
 	hasNewBal := func() bool {
 		bal, err := balForAddress(addr2)
 		require.NoError(t, err)
-		return bal == uint64(initialBalance+amt)
+		return bal.Cmp(big.NewInt(0).Add(initialBalance, big.NewInt(amt))) == 0
 	}
 
 	require.Eventually(t, hasInitialBal, time.Second*5, time.Second)

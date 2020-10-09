@@ -1,6 +1,7 @@
 package client
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/textileio/powergate/wallet/rpc"
@@ -48,7 +49,7 @@ func TestWalletBalance(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to get wallet balance: %v", err)
 	}
-	if bal != 0 {
+	if bal.Cmp(big.NewInt(0)) != 0 {
 		t.Fatalf("unexpected wallet balance: %v", bal)
 	}
 }

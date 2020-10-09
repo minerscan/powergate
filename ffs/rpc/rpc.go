@@ -246,7 +246,7 @@ func (s *RPC) Info(ctx context.Context, req *InfoRequest) (*InfoResponse, error)
 				Addr: balanceInfo.Addr,
 				Type: balanceInfo.Type,
 			},
-			Balance: int64(balanceInfo.Balance),
+			Balance: balanceInfo.Balance.String(),
 		}
 	}
 
@@ -494,7 +494,11 @@ func (s *RPC) SendFil(ctx context.Context, req *SendFilRequest) (*SendFilRespons
 	if err != nil {
 		return nil, err
 	}
-	if err := i.SendFil(ctx, req.From, req.To, big.NewInt(req.Amount)); err != nil {
+	bigAmount, ok := big.NewInt(0).SetString(req.Amount, 10)
+	if !ok {
+		return nil, fmt.Errorf("parsing amount: %s", err)
+	}
+	if err := i.SendFil(ctx, req.From, req.To, bigAmount); err != nil {
 		return nil, err
 	}
 	return &SendFilResponse{}, nil

@@ -24,7 +24,7 @@ message BalanceRequest {
 }
 
 message BalanceResponse {
-    uint64 balance = 1;
+    string balance = 1;
 }
 
 message SendFilRequest {

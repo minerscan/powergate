@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"math/big"
 	"net/http"
 	"os"
 	"strings"
@@ -267,13 +268,17 @@ func (f *FFS) Info(ctx context.Context) (api.InstanceInfo, error) {
 
 	balances := make([]api.BalanceInfo, len(res.Info.Balances))
 	for i, bal := range res.Info.Balances {
+		bigBal, ok := big.NewInt(0).SetString(bal.Balance, 10)
+		if !ok {
+			return api.InstanceInfo{}, fmt.Errorf("parsing balance: %s", err)
+		}
 		balances[i] = api.BalanceInfo{
 			AddrInfo: api.AddrInfo{
 				Name: bal.Addr.Name,
 				Addr: bal.Addr.Addr,
 				Type: bal.Addr.Type,
 			},
-			Balance: uint64(bal.Balance),
+			Balance: bigBal,
 		}
 	}
 
@@ -505,11 +510,11 @@ func (f *FFS) WatchLogs(ctx context.Context, ch chan<- LogEvent, c cid.Cid, opts
 }
 
 // SendFil sends fil from a managed address to any another address, returns immediately but funds are sent asynchronously.
-func (f *FFS) SendFil(ctx context.Context, from string, to string, amount int64) error {
+func (f *FFS) SendFil(ctx context.Context, from string, to string, amount *big.Int) error {
 	req := &rpc.SendFilRequest{
 		From:   from,
 		To:     to,
-		Amount: amount,
+		Amount: amount.String(),
 	}
 	_, err := f.client.SendFil(ctx, req)
 	return err

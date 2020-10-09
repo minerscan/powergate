@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"math/big"
 
 	"github.com/textileio/powergate/wallet/rpc"
 )
@@ -31,12 +32,16 @@ func (w *Wallet) List(ctx context.Context) ([]string, error) {
 }
 
 // Balance gets a filecoin wallet's balance.
-func (w *Wallet) Balance(ctx context.Context, address string) (uint64, error) {
+func (w *Wallet) Balance(ctx context.Context, address string) (*big.Int, error) {
 	resp, err := w.client.Balance(ctx, &rpc.BalanceRequest{Address: address})
 	if err != nil {
-		return 0, fmt.Errorf("calling WalletBalance: %v", err)
+		return big.NewInt(0), fmt.Errorf("calling WalletBalance: %v", err)
 	}
-	return resp.GetBalance(), nil
+	bigBalance, ok := big.NewInt(0).SetString(resp.GetBalance(), 10)
+	if !ok {
+		return nil, fmt.Errorf("parsing balance: %s", err)
+	}
+	return bigBalance, nil
 }
 
 // SendFil sends Fils from one address to another.

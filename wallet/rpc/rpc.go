@@ -43,7 +43,7 @@ func (s *RPC) Balance(ctx context.Context, req *BalanceRequest) (*BalanceRespons
 	if err != nil {
 		return nil, err
 	}
-	return &BalanceResponse{Balance: res}, nil
+	return &BalanceResponse{Balance: res.String()}, nil
 }
 
 // SendFil calls wallet.SendFil.

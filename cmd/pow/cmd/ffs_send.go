@@ -3,7 +3,7 @@ package cmd
 import (
 	"context"
 	"errors"
-	"strconv"
+	"math/big"
 
 	"github.com/caarlos0/spin"
 	"github.com/spf13/cobra"
@@ -35,13 +35,15 @@ var ffsSendCmd = &cobra.Command{
 		from := args[0]
 		to := args[1]
 
-		amount, err := strconv.ParseInt(args[2], 10, 64)
-		checkErr(err)
+		amount, ok := big.NewInt(0).SetString(args[2], 10)
+		if !ok {
+			Fatal(errors.New("amount isn't a valid number"))
+		}
 
 		s := spin.New("%s Sending fil...")
 		s.Start()
 
-		err = fcClient.FFS.SendFil(authCtx(ctx), from, to, amount)
+		err := fcClient.FFS.SendFil(authCtx(ctx), from, to, amount)
 		s.Stop()
 		checkErr(err)
 

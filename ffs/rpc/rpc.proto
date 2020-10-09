@@ -94,7 +94,7 @@ message CidInfo {
 
 message BalanceInfo {
    AddrInfo addr = 1;
-   int64 balance = 2;
+   string balance = 2;
 }
 
 message InstanceInfo {
@@ -368,7 +368,7 @@ message GetResponse {
 message SendFilRequest {
    string from = 1;
    string to = 2;
-   int64 amount = 3;
+   string amount = 3;
 }
 
 message SendFilResponse {

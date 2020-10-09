@@ -185,21 +185,21 @@ func (m *Module) List(ctx context.Context) ([]string, error) {
 }
 
 // Balance returns the balance of the specified address.
-func (m *Module) Balance(ctx context.Context, addr string) (uint64, error) {
+func (m *Module) Balance(ctx context.Context, addr string) (*big.Int, error) {
 	client, cls, err := m.clientBuilder()
 	if err != nil {
-		return 0, fmt.Errorf("creating lotus client: %s", err)
+		return big.NewInt(0), fmt.Errorf("creating lotus client: %s", err)
 	}
 	defer cls()
 	a, err := address.NewFromString(addr)
 	if err != nil {
-		return 0, err
+		return big.NewInt(0), fmt.Errorf("parsing wallet addr: %s", err)
 	}
 	b, err := client.WalletBalance(ctx, a)
 	if err != nil {
-		return 0, fmt.Errorf("getting balance from lotus: %s", err)
+		return big.NewInt(0), fmt.Errorf("getting balance from lotus: %s", err)
 	}
-	return b.Uint64(), nil
+	return b.Int, nil
 }
 
 // SendFil sends fil from one address to another.

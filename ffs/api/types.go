@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"math/big"
 
 	"github.com/ipfs/go-cid"
 	"github.com/textileio/powergate/ffs"
@@ -37,7 +38,7 @@ type InstanceInfo struct {
 // BalanceInfo contains the balance for the associated wallet address.
 type BalanceInfo struct {
 	AddrInfo
-	Balance uint64
+	Balance *big.Int
 }
 
 // NewAddressConfig contains options for creating a new wallet address.
