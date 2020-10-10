@@ -105,7 +105,7 @@ func TestInfo(t *testing.T) {
 		require.NotEmpty(t, first.ID)
 		require.Len(t, first.Balances, 1)
 		require.NotEmpty(t, first.Balances[0].Addr)
-		require.Greater(t, first.Balances[0].Balance, big.NewInt(0))
+		require.True(t, first.Balances[0].Balance.Cmp(big.NewInt(0)) > 0)
 		require.Equal(t, len(first.Pins), 0)
 
 		r := rand.New(rand.NewSource(22))
