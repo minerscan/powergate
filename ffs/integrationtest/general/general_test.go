@@ -156,7 +156,7 @@ func TestInfo(t *testing.T) {
 		require.Equal(t, second.ID, first.ID)
 		require.Len(t, second.Balances, 1)
 		require.Equal(t, second.Balances[0].Addr, first.Balances[0].Addr)
-		require.Less(t, second.Balances[0].Balance, first.Balances[0].Balance)
+		require.True(t, second.Balances[0].Balance.Cmp(first.Balances[0].Balance) < 0)
 		require.Equal(t, n, len(second.Pins))
 	})
 }
